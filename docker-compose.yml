@@ -1,0 +1,41 @@
+version: "3.9"
+
+services:
+  auth:
+    build: .
+    container_name: imunetrack-auth
+    ports:
+      - "8001:8000"
+    environment:
+      - ENV=dev
+      - DATABASE_URL=postgresql://postgres:postgres@imunetrack-auth-db:5432/imunetrack_auth
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - imunetrack-network
+
+  db:
+    image: postgres:16
+    container_name: imunetrack-auth-db
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: imunetrack_auth
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 2s
+      retries: 10
+    networks:
+      - imunetrack-network
+
+volumes:
+  postgres_data:
+
+networks:
+  imunetrack-network:
+    external: true
