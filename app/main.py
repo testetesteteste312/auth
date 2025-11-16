@@ -8,4 +8,4 @@ app = FastAPI(title="ImuneTrack Auth Service")
 Base.metadata.create_all(bind=engine)
 
 # Inclui os routers
-app.include_router(auth_router, prefix="/auth")
+app.include_router(auth_router)
